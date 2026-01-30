@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
     set_chat_services(rag_engine)
     set_quiz_services(quiz_generator)
 
-    logger.info(f"Services initialized (mock_mode={settings.MOCK_MODE})")
+    logger.info(f"Services initialized (mock_mode={settings.is_mock_mode})")
 
     yield
 
@@ -66,6 +66,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:1420",  # Tauri Vite dev server
         "http://localhost:5173",  # Vite dev server
         "http://localhost:3000",  # Alternative dev server
         "tauri://localhost",  # Tauri
@@ -87,7 +88,7 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "ok",
-        "mock_mode": settings.MOCK_MODE,
+        "mock_mode": settings.is_mock_mode,
     }
 
 

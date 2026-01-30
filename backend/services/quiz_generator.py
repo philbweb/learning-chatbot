@@ -13,7 +13,7 @@ class QuizGenerator:
     """Service for generating quizzes from knowledge base content."""
 
     def __init__(self):
-        self.mock_mode = settings.MOCK_MODE
+        self.mock_mode = settings.is_mock_mode
         self._llm_client = None
 
     async def initialize(self) -> None:

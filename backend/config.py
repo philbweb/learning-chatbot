@@ -29,10 +29,18 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 50
 
     # Mock mode for development without models
+    # Auto-disabled when ANTHROPIC_API_KEY is set
     MOCK_MODE: bool = True
 
     # Anthropic API
     ANTHROPIC_API_KEY: str = ""
+
+    @property
+    def is_mock_mode(self) -> bool:
+        """Return True if mock mode is enabled or API key is missing."""
+        if not self.MOCK_MODE and self.ANTHROPIC_API_KEY:
+            return False
+        return self.MOCK_MODE or not self.ANTHROPIC_API_KEY
 
     def ensure_directories(self) -> None:
         """Create necessary directories if they don't exist."""

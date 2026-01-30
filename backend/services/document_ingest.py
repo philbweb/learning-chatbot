@@ -15,7 +15,7 @@ class DocumentIngestService:
     def __init__(self):
         self.chunk_size = settings.CHUNK_SIZE
         self.chunk_overlap = settings.CHUNK_OVERLAP
-        self.mock_mode = settings.MOCK_MODE
+        self.mock_mode = settings.is_mock_mode
 
     async def extract_text(self, file_path: Path, file_type: str) -> str:
         """Extract text content from a file."""
