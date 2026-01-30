@@ -13,8 +13,15 @@ class QuizGenerator:
     """Service for generating quizzes from knowledge base content."""
 
     def __init__(self):
-        self.mock_mode = settings.is_mock_mode
+        self._mock_mode_override = None
         self._llm_client = None
+
+    @property
+    def mock_mode(self) -> bool:
+        """Check if mock mode is active."""
+        if self._mock_mode_override is not None:
+            return self._mock_mode_override
+        return settings.is_mock_mode
 
     async def initialize(self) -> None:
         """Initialize the LLM client."""
@@ -30,7 +37,7 @@ class QuizGenerator:
                 logger.info("Quiz generator initialized with Anthropic client")
             except Exception as e:
                 logger.warning(f"Failed to initialize LLM client: {e}")
-                self.mock_mode = True
+                self._mock_mode_override = True
 
     async def generate_questions(
         self,

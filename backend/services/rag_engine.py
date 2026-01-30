@@ -13,11 +13,18 @@ class RAGEngine:
     """Retrieval-Augmented Generation engine."""
 
     def __init__(self):
-        self.mock_mode = settings.is_mock_mode
+        self._mock_mode_override = None  # Set during initialize if fallback needed
         self._embedding_model = None
         self._vector_store = None
         self._llm_client = None
         self._chroma_path = Path("data/chroma")
+
+    @property
+    def mock_mode(self) -> bool:
+        """Check if mock mode is active."""
+        if self._mock_mode_override is not None:
+            return self._mock_mode_override
+        return settings.is_mock_mode
 
     async def initialize(self) -> None:
         """Initialize the RAG components."""
@@ -33,7 +40,7 @@ class RAGEngine:
             logger.info(f"Loaded embedding model: {settings.EMBEDDING_MODEL}")
         except Exception as e:
             logger.warning(f"Failed to load embedding model: {e}. Falling back to mock mode.")
-            self.mock_mode = True
+            self._mock_mode_override = True
             return
 
         # Initialize persistent vector store
@@ -49,7 +56,7 @@ class RAGEngine:
             logger.info(f"Initialized ChromaDB at {self._chroma_path}")
         except Exception as e:
             logger.warning(f"Failed to initialize vector store: {e}. Falling back to mock mode.")
-            self.mock_mode = True
+            self._mock_mode_override = True
             return
 
         # Initialize LLM client
